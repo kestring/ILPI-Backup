@@ -181,7 +181,7 @@ public class FrameUtilizacaoRemedio extends javax.swing.JFrame {
     private void comboBoxIdosoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxIdosoActionPerformed
         if(comboBoxIdoso.getSelectedIndex() != 0) {
             try {
-                List<PrescricaoMedica> lista = ImplPrescricaoMedica.getInstance().encontrarTodos(((Idoso) comboBoxIdoso.getSelectedItem()).getCodIdoso());
+                List<PrescricaoMedica> lista = ImplPrescricaoMedica.getInstance().encontrarTodos();
                 comboBoxPrescricao.removeAllItems();
                 comboBoxPrescricao.addItem("Selecione prescrição");
                 for (Iterator<PrescricaoMedica> it = lista.iterator(); it.hasNext();) {
@@ -197,7 +197,7 @@ public class FrameUtilizacaoRemedio extends javax.swing.JFrame {
     private void comboBoxPrescricaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxPrescricaoActionPerformed
         PrescricaoMedica pm = (PrescricaoMedica) comboBoxPrescricao.getSelectedItem();
         try {
-            listaItens = ImplPrescricaoMedica.getInstance().encontrarTodosItens(pm.getCodigoPrescricao());
+            listaItens = ImplItemPrescricaoMedica.getInstance().encontrarTodos(pm.getCodigoPrescricao());
             atualizaPrescricao();
         } catch(Exception ex) {
             ex.printStackTrace();

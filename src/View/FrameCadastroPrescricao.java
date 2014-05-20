@@ -814,7 +814,7 @@ public class FrameCadastroPrescricao extends javax.swing.JFrame {
             
             listaItensEdicao = new ArrayList<>();
             try {
-                listaItensEdicao = ImplPrescricaoMedica.getInstance().encontrarTodos(prescricao.getCodigoPrescricao());
+                listaItensEdicao = ImplItemPrescricaoMedica.getInstance().encontrarTodos(prescricao.getCodigoPrescricao());
 
                 for (Iterator<ItemPrescricaoMedica> it = listaItensEdicao.iterator(); it.hasNext();) {
                     ItemPrescricaoMedica itemPrescricaoMedica = it.next();
@@ -824,7 +824,7 @@ public class FrameCadastroPrescricao extends javax.swing.JFrame {
                 ex.printStackTrace();
             }
             atualizaPrescricaoEdicao();
-            SimpleDateFormat format = new SimpleDateFormat("DD//YYYY");
+            SimpleDateFormat format = new SimpleDateFormat("DD/MM/YYYY");
             campoDataEdicao.setText(format.format(prescricao.getDataPrescricao()));
             // campoIDEdicao.setText(prescricao.getID());
             comboBoxRemedioEdicao.setSelectedIndex(0);
