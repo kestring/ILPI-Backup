@@ -7,6 +7,8 @@
 package View;
 
 import Control.LoginController;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *
@@ -23,6 +25,9 @@ public class FrameCuidador extends javax.swing.JFrame {
         initComponents();
         interfaceILPI = interILPI;
         this.setLocationRelativeTo(null);
+        Date date = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/YYYY");
+        labelDataAtual.setText(format.format(date));
     }
 
     @Override
@@ -55,6 +60,7 @@ public class FrameCuidador extends javax.swing.JFrame {
         labelTipoEvento = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -148,6 +154,14 @@ public class FrameCuidador extends javax.swing.JFrame {
 
         jMenu1.setText("Arquivo");
 
+        jMenuItem3.setText("Utilização de Remédio");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem3);
+
         jMenuItem2.setText("Sair");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -204,6 +218,13 @@ public class FrameCuidador extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        FrameUtilizacaoRemedio frame;
+        frame = new FrameUtilizacaoRemedio(interfaceILPI.getUser().getFunc());
+        frame.setLocationRelativeTo(this);
+        frame.setVisible(true);
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea areaIdososCuidador;
     private javax.swing.JTextArea areaProximasTarefasCuidador;
@@ -214,6 +235,7 @@ public class FrameCuidador extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

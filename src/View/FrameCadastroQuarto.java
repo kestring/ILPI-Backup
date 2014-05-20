@@ -11,7 +11,8 @@ import Control.Impl.ImplQuartoDAO;
 import Model.Quarto;
 import Util.ComponentValidator;
 import Util.Mensagens;
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -275,7 +276,7 @@ public class FrameCadastroQuarto extends javax.swing.JFrame {
             ImplQuartoDAO.getInstance().inserir(q);
             limparCadastro();
             Mensagens.cadastradoComSucesso(this);
-        } catch(DAOException | SQLException ex) {
+        } catch(Exception ex) {
             ex.printStackTrace();
         }
     }//GEN-LAST:event_botaoCadastrarActionPerformed
@@ -345,7 +346,7 @@ public class FrameCadastroQuarto extends javax.swing.JFrame {
             ImplQuartoDAO.getInstance().atualizar(q);
             limparEdicao();
             Mensagens.cadastradoComSucesso(this);
-        } catch(DAOException | SQLException ex) {
+        } catch(Exception ex) {
             ex.printStackTrace();
         }
     }//GEN-LAST:event_botaoSalvarActionPerformed

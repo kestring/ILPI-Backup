@@ -11,8 +11,6 @@ import Control.Impl.ImplRemedioDAO;
 import Model.Remedio;
 import Util.ComponentValidator;
 import Util.Mensagens;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -273,7 +271,7 @@ public class FrameCadastroRemedio extends javax.swing.JFrame {
             ImplRemedioDAO.getInstance().inserir(r);
             limparCadastro();
             Mensagens.cadastradoComSucesso(this);
-        } catch(DAOException | SQLException ex) {
+        } catch(Exception ex) {
             ex.printStackTrace();
         }
     }//GEN-LAST:event_botaoCadastrarActionPerformed
@@ -306,7 +304,7 @@ public class FrameCadastroRemedio extends javax.swing.JFrame {
             limparCadastro();
             Mensagens.cadastradoComSucesso(this);
             habilitado(false);
-        } catch(DAOException | SQLException ex) {
+        } catch(Exception ex) {
             ex.printStackTrace();
         }
     }//GEN-LAST:event_botaoSalvarActionPerformed
