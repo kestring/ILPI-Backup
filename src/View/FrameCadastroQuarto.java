@@ -14,6 +14,7 @@ import Util.Mensagens;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -272,6 +273,11 @@ public class FrameCadastroQuarto extends javax.swing.JFrame {
         }
         q.setEstado(Quarto.ESTADO_DISPONIVEL);
         try {
+            Quarto q2 = ImplQuartoDAO.getInstance().encontrarPorCodigo(q.getNumQuarto(), q.getNumAndar());
+            if(q2 != null){
+                JOptionPane.showMessageDialog(null, "Quarto ja cadastrado!");
+                return;
+            }
             ImplQuartoDAO.getInstance().inserir(q);
             limparCadastro();
             Mensagens.cadastradoComSucesso(this);

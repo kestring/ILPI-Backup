@@ -275,6 +275,7 @@ public class FrameCadastroAlimento extends javax.swing.JFrame {
     }//GEN-LAST:event_botaoCadastrarActionPerformed
 
     private void botaoConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoConsultarActionPerformed
+        System.out.println("");
         if(!campoNomeConsulta.getText().isEmpty()){
             try{
                 Alimento a = ImplAlimentoDAO.getInstance().encontrarPorNome(campoNomeConsulta.getText());

@@ -188,7 +188,7 @@ public class ImplAlimentoDAO implements IDAO<Alimento> {
         ResultSet result;
         //TODO Fazer o insert do idoso aqui
         String sql = "select * from alimento "
-                + "where NOM_ALIMENTO = ?";
+                + "where upper(NOM_ALIMENTO) = upper(?)";
         prepared = con.prepareStatement(sql);
 
         prepared.setString(1, nome);

@@ -270,6 +270,8 @@ public class FrameCadastroRemedio extends javax.swing.JFrame {
             return;
         }
         try {
+            int codigo = ImplRemedioDAO.getInstance().encontrarCodMax();
+            r.setCodigo(codigo);
             ImplRemedioDAO.getInstance().inserir(r);
             limparCadastro();
             Mensagens.cadastradoComSucesso(this);
