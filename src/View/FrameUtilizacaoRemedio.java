@@ -57,7 +57,10 @@ public class FrameUtilizacaoRemedio extends javax.swing.JFrame {
     }
     
     private void limpar() {
-        
+        comboBoxIdoso.setSelectedIndex(0);
+        comboBoxPrescricao.setSelectedIndex(0);
+        listaPrescricao.setListData(new String[0]);
+        areaRemedios.setText("");
     }
     
     
@@ -81,6 +84,7 @@ public class FrameUtilizacaoRemedio extends javax.swing.JFrame {
         comboBoxIdoso = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Utilização de Remédio"));
 
