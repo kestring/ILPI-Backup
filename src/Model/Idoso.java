@@ -27,6 +27,8 @@ public class Idoso implements Comparable<Idoso> {
     private String endParente;
     private String numTelefoneParente;
     
+    private Funcionario cuidador;
+    
     public Idoso(){
         
     }
@@ -40,7 +42,8 @@ public class Idoso implements Comparable<Idoso> {
                  String cpf,
                  int rg,
                  String cuidadosEspeciais,
-                 boolean acamado) {
+                 boolean acamado,
+                 Funcionario cuidador) {
         this.codIdoso = codIdoso;
         this.nomeIdoso = nomeIdoso;
         this.dataNascimento = dataNascimento;
@@ -51,6 +54,7 @@ public class Idoso implements Comparable<Idoso> {
         this.endParente = endParente;
         this.cuidadosEspeciais = cuidadosEspeciais;
         this.acamado = acamado;
+        this.cuidador = cuidador;
     }
 
     @Override
@@ -154,6 +158,14 @@ public class Idoso implements Comparable<Idoso> {
     @Override
     public String toString() {
         return nomeIdoso;
+    }
+
+    public Funcionario getCuidador() {
+        return cuidador;
+    }
+
+    public void setCuidador(Funcionario cuidador) {
+        this.cuidador = cuidador;
     }
     
 }
