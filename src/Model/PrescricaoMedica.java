@@ -18,6 +18,7 @@ public class PrescricaoMedica {
     private int codigoPrescricao;
     private String observacao;
     private Date dataPrescricao;
+    private int horaPrescricao;
 
     public PrescricaoMedica() {
         this(null, 0, null, null);
@@ -28,6 +29,7 @@ public class PrescricaoMedica {
         this.codigoPrescricao = codigoPrescricao;
         this.observacao = observacao;
         this.dataPrescricao = dataPrescricao;
+        this.horaPrescricao = horaPrescricao;
     }
 
     public Idoso getIdoso() {
@@ -62,4 +64,16 @@ public class PrescricaoMedica {
         this.dataPrescricao = dataPrescricao;
     }
 
+    public int getHoraPrescricao() {
+        return horaPrescricao;
+    }
+
+    public void setHoraPrescricao(int horaPrescricao) {
+        this.horaPrescricao = horaPrescricao;
+    }
+    
+    public String toString() {
+        return "Prescrição n°" + codigoPrescricao;
+    }
+    
 }
