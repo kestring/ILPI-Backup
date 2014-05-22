@@ -102,6 +102,8 @@ public class ImplEventoDAO implements IDAO<Evento> {
     }
 
     public List<Evento> encontrarTodos() throws DAOException, SQLException {
+        // IMPLEMENTAR MÉTODO
+        
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -140,4 +142,10 @@ public class ImplEventoDAO implements IDAO<Evento> {
         }
         return a;
     }
+    
+    public Evento encontrarProximoEvento(Date data) throws DAOException, SQLException {
+        // RETORNAR O PROXIMO EVENTO LEVANDO EM CONTA A DATA INFORMADA
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
 }
