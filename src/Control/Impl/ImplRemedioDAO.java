@@ -5,6 +5,7 @@
 package Control.Impl;
 
 import Control.Impl.Exception.DAOException;
+import Control.Impl.Exception.DAOException;
 import Control.Interface.IDAO;
 import Model.Remedio;
 import Util.ConectionManager;
@@ -199,5 +200,23 @@ public class ImplRemedioDAO implements IDAO<Remedio> {
             a = new Remedio(codRemedio, nomRemedio, qtdEstoq, uniMedida);
         }
         return a;
+    }
+
+    public int encontrarCodMax() throws DAOException, SQLException{
+        Connection con = ConectionManager.getInstance().getConexao();
+        
+        PreparedStatement prepared;
+        ResultSet result;
+        //TODO Fazer o insert do idoso aqui
+        String sql = "select max(cod_remedio) + 1 as VAL from remedio ";
+        prepared = con.prepareStatement(sql);
+
+        result = prepared.executeQuery();
+
+        if(result.next()){
+            return result.getInt("VAL");
+        }else{
+            return 1;
+        }
     }
 }

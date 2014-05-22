@@ -6,10 +6,13 @@
 
 package View;
 
-import Control.Impl.Exception.DAOException;
 import Control.Impl.ImplAlimentoDAO;
+import Control.Impl.ImplRemedioDAO;
 import Model.Alimento;
-import javax.swing.JOptionPane;
+import Util.ComponentValidator;
+import Util.Mensagens;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *
@@ -17,11 +20,34 @@ import javax.swing.JOptionPane;
  */
 public class FrameCadastroAlimento extends javax.swing.JFrame {
 
+    private Alimento alimento;
+    
     /**
      * Creates new form FrameCadastroAlimento
      */
     public FrameCadastroAlimento() {
         initComponents();
+    }
+    
+    private void limparCadastro() {
+        campoNome.setText("");
+        campoQntEstoque.setText("");
+        campoInfNutricional.setText("");
+    }
+    
+    private void limparEdicao() {
+        campoNomeEdicao.setText("");
+        campoQntEstoqueEdicao.setText("");
+        campoInfNutricionalEdicao.setText("");
+        comboBoxAlimento.setSelectedIndex(0);
+        habilitado(false);
+    }
+    
+    private void habilitado(boolean flag) {
+        campoNomeEdicao.setEnabled(flag);
+        campoQntEstoqueEdicao.setEnabled(flag);
+        campoInfNutricionalEdicao.setEnabled(flag);
+        botaoSalvar.setEnabled(flag);
     }
     
     /**
@@ -43,23 +69,25 @@ public class FrameCadastroAlimento extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         campoInfNutricional = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
-        jPanel4 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        areaDescricao = new javax.swing.JTextArea();
-        jLabel4 = new javax.swing.JLabel();
-        campoNomeConsulta = new javax.swing.JTextField();
         botaoConsultar = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
-        campoNomeEdicao1 = new javax.swing.JTextField();
+        campoNomeEdicao = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        campoQntEstoqueEdicao1 = new javax.swing.JFormattedTextField();
+        campoQntEstoqueEdicao = new javax.swing.JFormattedTextField();
         jLabel10 = new javax.swing.JLabel();
-        campoInfNutricionalEdicao1 = new javax.swing.JTextField();
+        campoInfNutricionalEdicao = new javax.swing.JTextField();
         botaoSalvar = new javax.swing.JButton();
+        comboBoxAlimento = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Cadastro de Alimento");
         setResizable(false);
+
+        jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jTabbedPane1StateChanged(evt);
+            }
+        });
 
         jLabel1.setText("Nome:");
 
@@ -117,113 +145,97 @@ public class FrameCadastroAlimento extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(campoInfNutricional, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 185, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
                 .addComponent(botaoCadastrar)
                 .addContainerGap())
         );
 
         jTabbedPane1.addTab("Cadastro", jPanel1);
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Descrição"));
-
-        areaDescricao.setColumns(20);
-        areaDescricao.setRows(5);
-        areaDescricao.setEnabled(false);
-        jScrollPane1.setViewportView(areaDescricao);
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
-        );
-
-        jLabel4.setText("Nome do alimento:");
-
         botaoConsultar.setText("Consultar");
+        botaoConsultar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoConsultarActionPerformed(evt);
+            }
+        });
 
         jLabel8.setText("Nome:");
 
-        campoNomeEdicao1.setEnabled(false);
+        campoNomeEdicao.setEnabled(false);
 
         jLabel9.setText("Quantidade em estoque:");
 
-        campoQntEstoqueEdicao1.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-        campoQntEstoqueEdicao1.setEnabled(false);
+        campoQntEstoqueEdicao.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        campoQntEstoqueEdicao.setEnabled(false);
 
         jLabel10.setText("Informação nutricional:");
 
-        campoInfNutricionalEdicao1.setEnabled(false);
+        campoInfNutricionalEdicao.setEnabled(false);
 
         botaoSalvar.setText("Salvar alterações");
         botaoSalvar.setEnabled(false);
+        botaoSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoSalvarActionPerformed(evt);
+            }
+        });
+
+        comboBoxAlimento.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Selecione alimento" }));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel9)
-                                        .addComponent(jLabel8))
-                                    .addGap(10, 10, 10))
-                                .addGroup(jPanel2Layout.createSequentialGroup()
-                                    .addComponent(jLabel10)
-                                    .addGap(18, 18, 18)))
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addGap(40, 40, 40)))
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(campoInfNutricionalEdicao1, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(campoNomeEdicao1, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(campoQntEstoqueEdicao1, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
-                            .addComponent(campoNomeConsulta))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(botaoConsultar)
-                        .addGap(0, 8, Short.MAX_VALUE))))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(100, 100, 100)
-                .addComponent(botaoSalvar)
-                .addGap(0, 0, Short.MAX_VALUE))
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel9)
+                                            .addComponent(jLabel8))
+                                        .addGap(10, 10, 10))
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jLabel10)
+                                        .addGap(18, 18, 18)))
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(campoInfNutricionalEdicao, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(campoNomeEdicao, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(campoQntEstoqueEdicao, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(comboBoxAlimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(botaoConsultar))))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(115, 115, 115)
+                        .addComponent(botaoSalvar)))
+                .addGap(0, 107, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(campoNomeConsulta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botaoConsultar))
+                    .addComponent(botaoConsultar)
+                    .addComponent(comboBoxAlimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(campoNomeEdicao1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(campoNomeEdicao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
-                    .addComponent(campoQntEstoqueEdicao1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(campoQntEstoqueEdicao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
-                    .addComponent(campoInfNutricionalEdicao1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(campoInfNutricionalEdicao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(botaoSalvar)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Consulta", jPanel2);
@@ -243,32 +255,121 @@ public class FrameCadastroAlimento extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botaoCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoCadastrarActionPerformed
-        
+        Alimento r = new Alimento();
+        if(!campoNome.getText().equals("")) {
+            r.setNomeAlimento(campoNome.getText());
+        }
+        else {
+            Mensagens.campoInvalido(this, "Campo Nome");
+            return;
+        }
+        if(ComponentValidator.integerNotNegativeAndNotZero(campoQntEstoque)) {
+            r.setQtdEstoque(Integer.parseInt(campoQntEstoque.getText()));
+        }
+        else {
+            Mensagens.campoInvalido(this, "Campo Quantidade em Estoque");
+            return;
+        }
+        if(!campoInfNutricionalEdicao.getText().equals("")) {
+            r.setInfoNutricional(campoInfNutricional.getText());
+        }
+        else {
+            Mensagens.campoInvalido(this, "Campo Unidade de Medida");
+            return;
+        }
+        try {
+            ImplAlimentoDAO.getInstance().inserir(r);
+            limparCadastro();
+            Mensagens.cadastradoComSucesso(this);
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
     }//GEN-LAST:event_botaoCadastrarActionPerformed
 
+    private void botaoSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoSalvarActionPerformed
+        Alimento r = new Alimento();
+        if(!campoNomeEdicao.getText().equals("")) {
+            r.setNomeAlimento(campoNomeEdicao.getText());
+        }
+        else {
+            Mensagens.campoInvalido(this, "Campo Nome");
+            return;
+        }
+        if(ComponentValidator.integerNotNegativeAndNotZero(campoQntEstoque)) {
+            r.setQtdEstoque(Integer.parseInt(campoQntEstoque.getText()));
+        }
+        else {
+            Mensagens.campoInvalido(this, "Campo Quantidade em Estoque");
+            return;
+        }
+        if(!campoInfNutricionalEdicao.getText().equals("")) {
+            r.setInfoNutricional(campoInfNutricionalEdicao.getText());
+        }
+        else {
+            Mensagens.campoInvalido(this, "Campo Unidade de Medida");
+            return;
+        }
+        try {
+            ImplAlimentoDAO.getInstance().atualizar(r);
+            limparCadastro();
+            Mensagens.cadastradoComSucesso(this);
+            habilitado(false);
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_botaoSalvarActionPerformed
+
+    private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
+        if(jTabbedPane1.getSelectedIndex() == 1) {
+            try {
+                comboBoxAlimento.removeAllItems();
+                comboBoxAlimento.addItem("Selecione alimento");
+                List<Alimento> lista = ImplAlimentoDAO.getInstance().encontrarTodos();
+                if(lista != null) {
+                    for (Iterator<Alimento> it = lista.iterator(); it.hasNext();) {
+                        Alimento r = it.next();
+                        comboBoxAlimento.addItem(r);
+                    }
+                }
+            } catch(Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_jTabbedPane1StateChanged
+
+    private void botaoConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoConsultarActionPerformed
+        try {
+            if(comboBoxAlimento.getSelectedIndex() != 0) {
+                alimento = ImplAlimentoDAO.getInstance().encontrarPorNome(((Alimento)comboBoxAlimento.getSelectedItem()).getNomeAlimento());
+                campoNomeEdicao.setText(alimento.getNomeAlimento());
+                campoQntEstoqueEdicao.setText(alimento.getQtdEstoque() + "");
+                campoInfNutricionalEdicao.setText(alimento.getInfoNutricional()+ "");
+                habilitado(true);
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_botaoConsultarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea areaDescricao;
     private javax.swing.JButton botaoCadastrar;
     private javax.swing.JButton botaoConsultar;
     private javax.swing.JButton botaoSalvar;
     private javax.swing.JTextField campoInfNutricional;
-    private javax.swing.JTextField campoInfNutricionalEdicao1;
+    private javax.swing.JTextField campoInfNutricionalEdicao;
     private javax.swing.JTextField campoNome;
-    private javax.swing.JTextField campoNomeConsulta;
-    private javax.swing.JTextField campoNomeEdicao1;
+    private javax.swing.JTextField campoNomeEdicao;
     private javax.swing.JFormattedTextField campoQntEstoque;
-    private javax.swing.JFormattedTextField campoQntEstoqueEdicao1;
+    private javax.swing.JFormattedTextField campoQntEstoqueEdicao;
+    private javax.swing.JComboBox comboBoxAlimento;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 }

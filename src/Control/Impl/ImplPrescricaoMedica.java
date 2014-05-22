@@ -45,15 +45,13 @@ public class ImplPrescricaoMedica implements IDAO<PrescricaoMedica> {
                 + "COD_PRESCRICAO,"
                 + "COD_IDOSO,"
                 + "DSC_OBSERVACAO,"
-                + "DAT_PRESCRICAO,"
-                + "HORA_PRESCRICAO) "
-                + "values (?,?,?,?,?)");
+                + "DAT_PRESCRICAO "
+                + " values (?,?,?,?,?)");
 
         prepared.setInt(1, pres.getCodigoPrescricao());
         prepared.setInt(2, pres.getIdoso().getCodIdoso());
         prepared.setString(3, pres.getObservacao());
         prepared.setDate(4, pres.getDataPrescricao());
-        prepared.setInt(5, pres.getHoraPrescricao());
 
         prepared.execute();
     }
@@ -80,15 +78,13 @@ public class ImplPrescricaoMedica implements IDAO<PrescricaoMedica> {
                     + "set COD_PRESCRICAO = ?,"
                     + "COD_IDOSO = ?,"
                     + "DSC_OBSERVACAO = ?,"
-                    + "DAT_PRESCRICAO = ?,"
-                    + "HORA_PRESCRICAO = ?"
+                    + "DAT_PRESCRICAO = ? "
                     + "where COD_PRESCRICAO = ?";
             prepared = con.prepareStatement(sql);
             prepared.setInt(1, pres.getCodigoPrescricao());
             prepared.setInt(2, pres.getIdoso().getCodIdoso());
             prepared.setString(3, pres.getObservacao());
             prepared.setDate(4, pres.getDataPrescricao());
-            prepared.setInt(5, pres.getHoraPrescricao());
             prepared.setInt(6, pres.getCodigoPrescricao());
 
             prepared.execute();
@@ -140,10 +136,9 @@ public class ImplPrescricaoMedica implements IDAO<PrescricaoMedica> {
             int codIdoso = result.getInt("COD_IDOSO");
             String dscObservacao = result.getString("DSC_OBSERVACAO");
             Date datPrescricao = result.getDate("DAT_PRESCRICAO");
-            int horaPrescricao = result.getInt("HORA_PRESCRICAO");
             Idoso idoso = ImplIdosoDAO.getInstance().encontrarPorCodigo(codIdoso);
 
-            a = new PrescricaoMedica(idoso, codPrescricao, dscObservacao, datPrescricao, horaPrescricao);
+            a = new PrescricaoMedica(idoso, codPrescricao, dscObservacao, datPrescricao);
             lista.add(a);
         }
 
@@ -173,10 +168,9 @@ public class ImplPrescricaoMedica implements IDAO<PrescricaoMedica> {
             int codIdoso = result.getInt("COD_IDOSO");
             String dscObservacao = result.getString("DSC_OBSERVACAO");
             Date datPrescricao = result.getDate("DAT_PRESCRICAO");
-            int horaPrescricao = result.getInt("HORA_PRESCRICAO");
             Idoso idoso = ImplIdosoDAO.getInstance().encontrarPorCodigo(codIdoso);
 
-            a = new PrescricaoMedica(idoso, codPrescricao, dscObservacao, datPrescricao, horaPrescricao);
+            a = new PrescricaoMedica(idoso, codPrescricao, dscObservacao, datPrescricao);
         }
 
         if (a == null) {

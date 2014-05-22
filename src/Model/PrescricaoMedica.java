@@ -21,10 +21,10 @@ public class PrescricaoMedica {
     private int horaPrescricao;
 
     public PrescricaoMedica() {
-        this(null, 0, null, null, 0);
+        this(null, 0, null, null);
     }
     
-    public PrescricaoMedica(Idoso idoso, int codigoPrescricao, String observacao, Date dataPrescricao, int horaPrescricao) {
+    public PrescricaoMedica(Idoso idoso, int codigoPrescricao, String observacao, Date dataPrescricao) {
         this.idoso = idoso;
         this.codigoPrescricao = codigoPrescricao;
         this.observacao = observacao;

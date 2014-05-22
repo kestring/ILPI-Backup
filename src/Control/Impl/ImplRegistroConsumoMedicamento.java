@@ -5,6 +5,7 @@
 package Control.Impl;
 
 import Control.Impl.Exception.DAOException;
+import Control.Impl.Exception.DAOException;
 import Control.Interface.IDAO;
 import Model.RegistroConsumoMedicamento;
 import Util.ConectionManager;
@@ -131,10 +132,17 @@ public class ImplRegistroConsumoMedicamento implements IDAO<RegistroConsumoMedic
     }
 
     public List<RegistroConsumoMedicamento> encontrarTodos() throws DAOException, SQLException {
+        // IMPLEMENTAR MÉTODO
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public RegistroConsumoMedicamento encontrarPorCodigo(int codigo) throws DAOException, SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    public List<RegistroConsumoMedicamento> encontrarTodosPrescricao(int codPrescricao) throws DAOException, SQLException {
+        // RETORNAR TODOS OS REGISTROS DE ACORDO COM O CODIGO DA PRESCRIÇÃO
+        
         throw new UnsupportedOperationException("Not supported yet.");
     }
     

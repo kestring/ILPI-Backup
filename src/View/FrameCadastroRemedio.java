@@ -187,22 +187,25 @@ public class FrameCadastroRemedio extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(comboBoxRemedio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(botaoConsultar))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel9)
                             .addComponent(jLabel8)
                             .addComponent(jLabel10))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(botaoSalvar)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(campoNomeEdicao)
-                                .addComponent(campoQntEstoqueEdicao, javax.swing.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
-                                .addComponent(campoUnidadeMedidaEdicao, javax.swing.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE))))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(comboBoxRemedio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(botaoConsultar)))
-                .addGap(184, 184, 184))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botaoSalvar))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(campoQntEstoqueEdicao, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(campoNomeEdicao, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(campoUnidadeMedidaEdicao, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -278,22 +281,22 @@ public class FrameCadastroRemedio extends javax.swing.JFrame {
 
     private void botaoSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoSalvarActionPerformed
         Remedio r = new Remedio();
-        if(!campoNome.getText().equals("")) {
-            r.setNomeRemedio(campoNome.getText());
+        if(!campoNomeEdicao.getText().equals("")) {
+            r.setNomeRemedio(campoNomeEdicao.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Nome");
             return;
         }
-        if(ComponentValidator.integerNotNegativeAndNotZero(campoQntEstoque)) {
-            r.setQtdEstoque(Integer.parseInt(campoQntEstoque.getText()));
+        if(ComponentValidator.integerNotNegativeAndNotZero(campoQntEstoqueEdicao)) {
+            r.setQtdEstoque(Integer.parseInt(campoQntEstoqueEdicao.getText()));
         }
         else {
             Mensagens.campoInvalido(this, "Campo Quantidade em Estoque");
             return;
         }
-        if(!campoUnidadeMedida.getText().equals("")) {
-            r.setUnidadeMedida(campoUnidadeMedida.getText());
+        if(!campoUnidadeMedidaEdicao.getText().equals("")) {
+            r.setUnidadeMedida(campoUnidadeMedidaEdicao.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Unidade de Medida");

@@ -5,6 +5,7 @@
 package Control.Impl;
 
 import Control.Impl.Exception.DAOException;
+import Control.Impl.Exception.DAOException;
 import Control.Interface.IDAO;
 import Model.Idoso;
 import Util.ConectionManager;
@@ -54,8 +55,9 @@ public class ImplIdosoDAO implements IDAO<Idoso> {
                 + "NUM_TEL_PARENT,"
                 + "LOCAL_ORIGEM,"
                 + "DSC_ENDERECO,"
-                + "DSC_CUIDADOS_ESP) "
-                + "values (?,?,?,?,?,?,?,?,?,?,?)");
+                + "DSC_CUIDADOS_ESP,"
+                + "COD_CUIDADOR) "
+                + "values (?,?,?,?,?,?,?,?,?,?,?,?)");
 
         prepared.setInt(1, idoso.getCodIdoso());
         prepared.setString(2, idoso.getNomeIdoso());
@@ -66,8 +68,9 @@ public class ImplIdosoDAO implements IDAO<Idoso> {
         prepared.setString(7, idoso.getEndParente());
         prepared.setString(8, idoso.getNumTelefoneParente());
         prepared.setString(9, idoso.getLocalOrigem());
-        prepared.setString(10,"");
+        prepared.setString(10,idoso.getEndParente());
         prepared.setString(11, idoso.getCuidadosEspeciais());
+        prepared.setInt(12, idoso.getCuidador().getCodFuncionario());
 
         prepared.execute();
     }
@@ -139,6 +142,46 @@ public class ImplIdosoDAO implements IDAO<Idoso> {
         }
     }
 
+    public List<Idoso> encontrarTodosCuidador(int codCuidador) throws DAOException, SQLException {
+        Connection con = ConectionManager.getInstance().getConexao();
+        TreeSet<Idoso> set = new TreeSet<>();
+        PreparedStatement prepared;
+        ResultSet result;
+        //TODO Fazer o insert do idoso aqui
+        String sql = "select * from idoso"
+                + "where COD_CUIDADOR = ? ";
+        prepared = con.prepareStatement(sql);
+        prepared.setInt(1, codCuidador);
+
+        result = prepared.executeQuery();
+
+        Idoso a = null;
+        while(result.next()){
+            int codIdoso = result.getInt("COD_IDOSO");
+            String nome = result.getString("NOM_IDOSO");
+            Date data = result.getDate("DAT_NASCIMENTO");
+            String local = result.getString("LOCAL_ORIGEM");
+            String fone = result.getString("NUM_TEL_PARENT");
+            String end = result.getString("DSC_END_PARENT");
+            String cuidados = result.getString("DSC_CUIDADOS_ESP");
+            boolean acamado = result.getBoolean("ACAMADO");
+            String cpf = result.getString("NUM_CPF");
+            int rg = result.getInt("NUM_RG");
+            a = new Idoso(codIdoso, nome, data, local, fone, end, cpf, rg, cuidados, acamado);
+
+            set.add(a);
+        }
+        if(set.isEmpty()){
+            throw new DAOException("Não foi possível encontrar alimentos");
+        }
+        ArrayList<Idoso> list = new ArrayList<>();
+        for (Iterator<Idoso> it = set.iterator(); it.hasNext();) {
+            Idoso idoso = it.next();
+            list.add(idoso);
+        }
+        return list;
+    }
+    
     public List<Idoso> encontrarTodosIdosos() throws DAOException, SQLException {
         Connection con = ConectionManager.getInstance().getConexao();
         TreeSet<Idoso> set = new TreeSet<>();

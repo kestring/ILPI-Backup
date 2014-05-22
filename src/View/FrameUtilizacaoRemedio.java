@@ -202,6 +202,11 @@ public class FrameUtilizacaoRemedio extends javax.swing.JFrame {
         PrescricaoMedica pm = (PrescricaoMedica) comboBoxPrescricao.getSelectedItem();
         try {
             listaItens = ImplItemPrescricaoMedica.getInstance().encontrarTodos(pm.getCodigoPrescricao());
+            List<RegistroConsumoMedicamento> listaReg = ImplRegistroConsumoMedicamento.getInstance().encontrarTodosPrescricao(pm.getCodigoPrescricao());
+            for (Iterator<RegistroConsumoMedicamento> it = listaReg.iterator(); it.hasNext();) {
+                RegistroConsumoMedicamento registroConsumoMedicamento = it.next();
+                areaRemedios.append(registroConsumoMedicamento.toString() + "\n");
+            }
             atualizaPrescricao();
         } catch(Exception ex) {
             ex.printStackTrace();
@@ -226,6 +231,7 @@ public class FrameUtilizacaoRemedio extends javax.swing.JFrame {
                     areaRemedios.append(registroConsumoMedicamento + "\n");
                 }
                 listaItens.remove(ipm);
+                areaRemedios.append(registro.toString() + "\n");
                 limpar();
             } catch(Exception ex) {
                 ex.printStackTrace();

@@ -27,6 +27,8 @@ public class Idoso implements Comparable<Idoso> {
     private String endParente;
     private String numTelefoneParente;
     
+    private Funcionario cuidador;
+    
     public Idoso(){
         
     }
@@ -149,6 +151,14 @@ public class Idoso implements Comparable<Idoso> {
 
     public void setEndParente(String endParente) {
         this.endParente = endParente;
+    }
+
+    public Funcionario getCuidador() {
+        return cuidador;
+    }
+
+    public void setCuidador(Funcionario cuidador) {
+        this.cuidador = cuidador;
     }
     
     @Override
