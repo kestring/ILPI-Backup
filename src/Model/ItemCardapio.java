@@ -10,8 +10,6 @@ package Model;
  */
 public class ItemCardapio {
     
-    private int cod = 0;
-    
     private Cardapio cardapio;
     private Alimento alimento;
     private int qtdProduzida;
@@ -60,20 +58,12 @@ public class ItemCardapio {
         this.numeroAlimento = numeroAlimento;
     }
 
-    public int getCod() {
-        return cod;
-    }
-
-    public void setCod(int cod) {
-        this.cod = cod;
-    }
-
     @Override
     public boolean equals(Object o) {
         if(o instanceof ItemCardapio) {
             ItemCardapio iC = (ItemCardapio) o;
             return this.numeroAlimento == iC.getNumeroAlimento() &&
-                   this.cod == iC.getCod();
+                   this.getCardapio().getCodigo() == iC.getCardapio().getCodigo();
         }
         else {
             throw new IllegalArgumentException();
@@ -82,7 +72,7 @@ public class ItemCardapio {
     
     @Override
     public String toString() {
-        return "Alimento: " + alimento.getNomeAlimento() + " Quantidade: " + qtdProduzida;
+        return "Alimento: " + alimento.getNomeAlimento();
     }
     
 }

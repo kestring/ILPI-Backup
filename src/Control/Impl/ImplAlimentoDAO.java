@@ -5,7 +5,6 @@
 package Control.Impl;
 
 import Control.Impl.Exception.DAOException;
-import Control.Impl.Exception.DAOException;
 import Control.Interface.IDAO;
 import Model.Alimento;
 import Util.ConectionManager;
@@ -86,7 +85,7 @@ public class ImplAlimentoDAO implements IDAO<Alimento> {
             sql = "update alimento "
                     + "set INF_NUTRICIONAL = ?,"
                         + "NOM_ALIMENTO = ?,"
-                        + "QTD_ESTOQ = ?"
+                        + "QTD_ESTOQUE = ?"
                   + "where COD_ALIMENTO = ?";
             prepared = con.prepareStatement(sql);
             prepared.setString(1, ali.getInfoNutricional());
@@ -114,7 +113,7 @@ public class ImplAlimentoDAO implements IDAO<Alimento> {
         result = prepared.executeQuery();
 
         if(result.next()){
-            sql = "delete alimento "
+            sql = "delete from alimento "
                     + "where COD_ALIMENTO = ?";
             prepared = con.prepareStatement(sql);
             prepared.setInt(1, ali.getCodigo());

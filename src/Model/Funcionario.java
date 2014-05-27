@@ -68,4 +68,7 @@ public class Funcionario {
         this.telefone = telefone;
     }
     
+    public String toString(){
+        return this.nomeFuncionario;
+    }
 }

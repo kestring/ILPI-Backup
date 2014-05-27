@@ -6,19 +6,21 @@
 
 package View;
 
-import Control.Impl.Exception.DAOException;
 import Control.Impl.ImplFuncionarioDAO;
 import Control.Impl.ImplIdosoDAO;
 import Control.Impl.ImplQuartoDAO;
 import Model.Funcionario;
 import Model.Idoso;
 import Model.Quarto;
-import Model.Usuario;
 import Util.ComponentValidator;
 import Util.DataConverter;
 import Util.Mensagens;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 /**
  *
  * @author Eduardo
@@ -35,7 +37,7 @@ public class FrameCadastroIdoso extends javax.swing.JFrame {
     public FrameCadastroIdoso() {
         initComponents();
         try {
-            List<Quarto> lista = ImplQuartoDAO.getInstance().encontrarTodos();
+            List<Quarto> lista = ImplQuartoDAO.getInstance().encontrarQuartoDisponivel();
             if(lista != null) {
                 for (Iterator<Quarto> it = lista.iterator(); it.hasNext();) {
                     Quarto q = it.next();
@@ -43,7 +45,7 @@ public class FrameCadastroIdoso extends javax.swing.JFrame {
                     comboBoxQuartoEdicao.addItem(q);
                 }
             }
-            List<Funcionario> listaCuidadores = ImplFuncionarioDAO.getInstance().encontrarTodos();
+            List<Funcionario> listaCuidadores = ImplFuncionarioDAO.getInstance().encontraFuncCuidador();
             if(listaCuidadores != null) {
                 for (Iterator<Funcionario> it = listaCuidadores.iterator(); it.hasNext();) {
                     Funcionario funcionario = it.next();
@@ -89,17 +91,18 @@ public class FrameCadastroIdoso extends javax.swing.JFrame {
     
     private void habilitado(boolean flag) {
         areaObservacoesEdicao.setEnabled(flag);
-        campoCPFEdicao.setEnabled(flag);
+        campoCPFEdicao.setEnabled(false);
         campoDataNascimentoEdicao.setEnabled(flag);
         campoEnderecoParenteEdicao.setEnabled(flag);
         campoFoneParenteEdicao.setEnabled(flag);
         campoLocOrigemEdicao.setEnabled(flag);
         campoNomeEdicao.setEnabled(flag);
         campoNomeParenteEdicao.setEnabled(flag);
-        campoRGEdicao.setEnabled(flag);
+        campoRGEdicao.setEnabled(false);
         comboBoxQuartoEdicao.setEnabled(flag);
         comboBoxCuidadorEdicao.setEnabled(flag);
         botaoSalvar.setEnabled(flag);
+        checkBoxAcamadoEdicao.setEnabled(flag);
     }
     
     /**
@@ -830,66 +833,82 @@ public class FrameCadastroIdoso extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botaoCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoCadastrarActionPerformed
-        Idoso i = new Idoso();
-        i.setAcamado(checkBoxAcamado.isSelected());
+        idoso = new Idoso();
+        idoso.setAcamado(checkBoxAcamado.isSelected());
         if(ComponentValidator.cpf(campoCPF)) {
-            i.setCpf(campoCPF.getText());
+            try {
+                if(ImplIdosoDAO.getInstance().validaCPF(campoCPF.getText())){
+                    JOptionPane.showMessageDialog(null, "CPF já cadastrado!");
+                    return;
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            idoso.setCpf(campoCPF.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo CPF");
             return;
         }
         if(!areaObservacoes.getText().equals("")) {
-            i.setCuidadosEspeciais(areaObservacoes.getText());
+            idoso.setCuidadosEspeciais(areaObservacoes.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Cuidados Especiais");
             return;
         }
         if(ComponentValidator.date(campoDataNascimento)) {
-            i.setDataNascimento(DataConverter.stringTypeToSQLDate(campoDataNascimento.getText()));
+            idoso.setDataNascimento(DataConverter.stringTypeToSQLDate(campoDataNascimento.getText()));
         }
         else {
             Mensagens.campoInvalido(this, "Campo Data de Nascimento");
             return;
         }
         if(!campoEnderecoParente.getText().equals("")) {
-            i.setEndParente(campoEnderecoParente.getText());
+            idoso.setEndParente(campoEnderecoParente.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Endereço do Parente Responsável");
             return;
         }
         if(!campoLocOrigem.getText().equals("")) {
-            i.setLocalOrigem(campoLocOrigem.getText());
+            idoso.setLocalOrigem(campoLocOrigem.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Local de Origem");
             return;
         }
         if(!campoNome.getText().equals("")) {
-            i.setNomeIdoso(campoNome.getText());
+            idoso.setNomeIdoso(campoNome.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Nome");
             return;
         }
         if(!campoNomeParente.getText().equals("")) {
-            i.setNomeParenteResponsavel(campoNomeParente.getText());
+            idoso.setNomeParenteResponsavel(campoNomeParente.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Nome do Parente Responsável");
             return;
         }
         if(ComponentValidator.fone(campoFoneParente)) {
-            i.setNumTelefoneParente(campoFoneParente.getText());
+            idoso.setNumTelefoneParente(campoFoneParente.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Telefone do Parente Responsável");
             return;
         }
         if(ComponentValidator.rg(campoRG)) {
-            i.setRg(Integer.parseInt(campoRG.getText()));
+            try {
+                if(ImplIdosoDAO.getInstance().validaRG(Integer.parseInt(campoRG.getText()))){
+                    JOptionPane.showMessageDialog(null, "RG já cadastrado!");
+                    return;
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            idoso.setRg(Integer.parseInt(campoRG.getText()));
         }
         else {
             Mensagens.campoInvalido(this, "Campo RG");
@@ -904,16 +923,19 @@ public class FrameCadastroIdoso extends javax.swing.JFrame {
             return;
         }
         else {
-            i.setCuidador((Funcionario) comboBoxCuidador.getSelectedItem());
+            idoso.setCuidador((Funcionario) comboBoxCuidador.getSelectedItem());
         }
         try {
-            ImplIdosoDAO.getInstance().inserir(i);
-            Quarto q = (Quarto) comboBoxQuarto.getSelectedItem();
-            q.setCapacidade(q.getCapacidade() - 1);
-            if(q.getCapacidade() == 0) {
-                q.setEstado(Quarto.ESTADO_INDISPONIVEL);
+            idoso.setCodIdoso(ImplIdosoDAO.getInstance().encontrarCodMax());
+            
+            quarto = (Quarto) comboBoxQuarto.getSelectedItem();
+            idoso.setQuarto(quarto);
+            ImplIdosoDAO.getInstance().inserir(idoso);
+            quarto.setCapacidade(quarto.getCapacidade() - 1);
+            if(quarto.getCapacidade() == 0) {
+                quarto.setEstado(Quarto.ESTADO_INDISPONIVEL);
             }
-            ImplQuartoDAO.getInstance().atualizar(q);
+            ImplQuartoDAO.getInstance().atualizar(quarto);
             limparCadastro();
             Mensagens.cadastradoComSucesso(this);
         } catch(Exception ex) {
@@ -973,7 +995,7 @@ public class FrameCadastroIdoso extends javax.swing.JFrame {
 
     private void botaoConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoConsultarActionPerformed
         try {
-            idoso = ImplIdosoDAO.getInstance().encontrarPorCodigo(((Idoso) comboBoxIdoso.getSelectedItem()).getCodIdoso());
+            idoso = (Idoso) comboBoxIdoso.getSelectedItem();
             if(idoso != null) {
                 habilitado(true);
                 campoCPFEdicao.setText(idoso.getCpf());
@@ -984,10 +1006,40 @@ public class FrameCadastroIdoso extends javax.swing.JFrame {
                 campoNomeEdicao.setText(idoso.getNomeIdoso());
                 campoNomeParenteEdicao.setText(idoso.getNomeParenteResponsavel());
                 campoRGEdicao.setText(idoso.getRg() + "");
+                campoCPFEdicao.setText(idoso.getCpf());
                 checkBoxAcamadoEdicao.setSelected(idoso.getAcamado());
-                // comboBoxQuartoEdicao.setSelectedItem(idoso.getQuarto);
-                // quarto = idoso.getQuarto();
-                comboBoxCuidadorEdicao.setSelectedItem(idoso.getCuidador());
+                areaObservacoesEdicao.setText(idoso.getCuidadosEspeciais());
+                
+                Quarto quarto = ImplQuartoDAO.getInstance().encontraQuartoIdoso(idoso.getCodIdoso());
+                
+                List<Quarto> lista = ImplQuartoDAO.getInstance().encontrarQuartoDisponivel();
+                comboBoxQuarto.setModel(new DefaultComboBoxModel());
+                comboBoxQuartoEdicao.setModel(new DefaultComboBoxModel());
+                comboBoxQuarto.addItem("Selecione quarto");
+                comboBoxQuartoEdicao.addItem("Selecione quarto");
+                if(lista != null) {
+                    for (Iterator<Quarto> it = lista.iterator(); it.hasNext();) {
+                        Quarto q = it.next();
+                        comboBoxQuarto.addItem(q);
+                        comboBoxQuartoEdicao.addItem(q);
+                    }
+                }
+                
+                ComboBoxModel<Quarto> model =  comboBoxQuartoEdicao.getModel();
+                for(int i = 1; i < model.getSize();i++){
+                    Quarto q = model.getElementAt(i);
+                    if(q.compareTo(quarto) == 0){
+                        comboBoxQuartoEdicao.setSelectedIndex(i);
+                    }
+                }
+                
+                ComboBoxModel<Funcionario> modelFunc =  comboBoxCuidadorEdicao.getModel();
+                for(int i = 1; i < modelFunc.getSize();i++){
+                    Funcionario f = modelFunc.getElementAt(i);
+                    if(f.getCodFuncionario() == idoso.getCuidador().getCodFuncionario()){
+                        comboBoxCuidadorEdicao.setSelectedIndex(i);
+                    }
+                }
             }
             else {
                 Mensagens.naoEncontradoConsulta(this);
@@ -998,66 +1050,66 @@ public class FrameCadastroIdoso extends javax.swing.JFrame {
     }//GEN-LAST:event_botaoConsultarActionPerformed
 
     private void botaoSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoSalvarActionPerformed
-        Idoso i = new Idoso();
-        i.setAcamado(checkBoxAcamadoEdicao.isSelected());
+        idoso = (Idoso)comboBoxIdoso.getSelectedItem();
+        idoso.setAcamado(checkBoxAcamadoEdicao.isSelected());
         if(ComponentValidator.cpf(campoCPFEdicao)) {
-            i.setCpf(campoCPFEdicao.getText());
+            idoso.setCpf(campoCPFEdicao.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo CPF");
             return;
         }
         if(!areaObservacoesEdicao.getText().equals("")) {
-            i.setCuidadosEspeciais(areaObservacoesEdicao.getText());
+            idoso.setCuidadosEspeciais(areaObservacoesEdicao.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Cudados Especiais");
             return;
         }
         if(ComponentValidator.date(campoDataNascimentoEdicao)) {
-            i.setDataNascimento(DataConverter.stringTypeToSQLDate(campoDataNascimentoEdicao.getText()));
+            idoso.setDataNascimento(DataConverter.stringTypeToSQLDate(campoDataNascimentoEdicao.getText()));
         }
         else {
             Mensagens.campoInvalido(this, "Campo Data de Nascimento");
             return;
         }
         if(!campoEnderecoParenteEdicao.getText().equals("")) {
-            i.setEndParente(campoEnderecoParenteEdicao.getText());
+            idoso.setEndParente(campoEnderecoParenteEdicao.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Endereço do Parente Responsável");
             return;
         }
         if(!campoLocOrigemEdicao.getText().equals("")) {
-            i.setLocalOrigem(campoLocOrigemEdicao.getText());
+            idoso.setLocalOrigem(campoLocOrigemEdicao.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Local de Origem");
             return;
         }
         if(!campoNomeEdicao.getText().equals("")) {
-            i.setNomeIdoso(campoNomeEdicao.getText());
+            idoso.setNomeIdoso(campoNomeEdicao.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Nome");
             return;
         }
         if(!campoNomeParenteEdicao.getText().equals("")) {
-            i.setNomeParenteResponsavel(campoNomeParenteEdicao.getText());
+            idoso.setNomeParenteResponsavel(campoNomeParenteEdicao.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Nome do Parente Responsável");
             return;
         }
         if(ComponentValidator.fone(campoFoneParenteEdicao)) {
-            i.setNumTelefoneParente(campoFoneParenteEdicao.getText());
+            idoso.setNumTelefoneParente(campoFoneParenteEdicao.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Telefone do Parente Responsável");
             return;
         }
         if(ComponentValidator.rg(campoRGEdicao)) {
-            i.setRg(Integer.parseInt(campoRGEdicao.getText()));
+            idoso.setRg(Integer.parseInt(campoRGEdicao.getText()));
         }
         else {
             Mensagens.campoInvalido(this, "Campo RG");
@@ -1072,20 +1124,13 @@ public class FrameCadastroIdoso extends javax.swing.JFrame {
             return;
         }
         else {
-            i.setCuidador((Funcionario) comboBoxCuidadorEdicao.getSelectedItem());
+            idoso.setCuidador((Funcionario) comboBoxCuidadorEdicao.getSelectedItem());
         }
         try {
-            ImplIdosoDAO.getInstance().atualizar(i);
-            quarto.setCapacidade(quarto.getCapacidade() + 1);
-            quarto.setEstado(Quarto.ESTADO_DISPONIVEL);
-            Quarto q = (Quarto) comboBoxQuartoEdicao.getSelectedItem();
-            q.setCapacidade(q.getCapacidade() - 1);
-            if(q.getCapacidade() == 0) {
-                q.setEstado(Quarto.ESTADO_INDISPONIVEL);
-            }
-            ImplQuartoDAO.getInstance().atualizar(quarto);
-            ImplQuartoDAO.getInstance().atualizar(q);
-            quarto = q;
+            Quarto q = idoso.getQuarto();
+            quarto = (Quarto)comboBoxQuartoEdicao.getSelectedItem();
+            idoso.setQuarto(quarto);
+            ImplIdosoDAO.getInstance().atualizar(idoso);
             limparEdicao();
             Mensagens.alteradoComSucesso(this);
         } catch(Exception ex) {

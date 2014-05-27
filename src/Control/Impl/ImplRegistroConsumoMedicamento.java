@@ -5,7 +5,6 @@
 package Control.Impl;
 
 import Control.Impl.Exception.DAOException;
-import Control.Impl.Exception.DAOException;
 import Control.Interface.IDAO;
 import Model.RegistroConsumoMedicamento;
 import Util.ConectionManager;

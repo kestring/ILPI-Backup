@@ -6,12 +6,15 @@
 
 package View;
 
-import java.util.List;
-import Model.*;
-import Control.Impl.*;
 import Control.Impl.Exception.DAOException;
+import Control.Impl.ImplIdosoDAO;
+import Control.Impl.ImplPertenceDAO;
+import Model.Idoso;
+import Model.Pertence;
 import Util.Mensagens;
+import java.sql.SQLException;
 import java.util.Iterator;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -36,7 +39,7 @@ public class FrameCadastroPertence extends javax.swing.JFrame {
                     comboBoxIdosoEdicao.addItem(idoso);
                 }
             }
-        } catch(Exception ex) {
+        } catch(SQLException | DAOException ex) {
             ex.printStackTrace();
         }
         
@@ -257,11 +260,10 @@ public class FrameCadastroPertence extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botaoCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoCadastrarActionPerformed
-        Idoso i;
         String nome;
         String descricao;
         if(comboBoxIdoso.getSelectedIndex() != 0) {
-            i = (Idoso) comboBoxIdoso.getSelectedItem();
+            idosoSelecionado = (Idoso) comboBoxIdoso.getSelectedItem();
         }
         else {
             Mensagens.campoInvalido(this, "Campo Idoso");
@@ -281,11 +283,13 @@ public class FrameCadastroPertence extends javax.swing.JFrame {
             Mensagens.campoInvalido(this, "Campo Descrição");
             return;
         }
-        Pertence p = new Pertence(i, nome, descricao);
+        Pertence p = new Pertence(idosoSelecionado, nome, descricao);
         try {
+            p.setNumeroPertence(ImplPertenceDAO.getInstance().ecnontrarCodMax(idosoSelecionado.getCodIdoso()));
             ImplPertenceDAO.getInstance().inserir(p);
             limparCadastro();
-        } catch(Exception ex) {
+            JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!");
+        } catch(SQLException | DAOException ex) {
             ex.printStackTrace();
         }
     }//GEN-LAST:event_botaoCadastrarActionPerformed
@@ -304,7 +308,8 @@ public class FrameCadastroPertence extends javax.swing.JFrame {
                         comboBoxPertence.addItem(pertence);
                     }
                 }
-            } catch(Exception ex) {
+            } catch(SQLException | DAOException ex) {
+                JOptionPane.showMessageDialog(null, "Idoso não possui pertences cadastrados!");
                 ex.printStackTrace();
             }
         }

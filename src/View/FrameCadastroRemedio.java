@@ -11,6 +11,7 @@ import Control.Impl.ImplRemedioDAO;
 import Model.Remedio;
 import Util.ComponentValidator;
 import Util.Mensagens;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -271,43 +272,43 @@ public class FrameCadastroRemedio extends javax.swing.JFrame {
             return;
         }
         try {
+            r.setCodigo(ImplRemedioDAO.getInstance().encontrarCodMax());
             ImplRemedioDAO.getInstance().inserir(r);
             limparCadastro();
             Mensagens.cadastradoComSucesso(this);
-        } catch(Exception ex) {
+        } catch(SQLException | DAOException ex) {
             ex.printStackTrace();
         }
     }//GEN-LAST:event_botaoCadastrarActionPerformed
 
     private void botaoSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoSalvarActionPerformed
-        Remedio r = new Remedio();
         if(!campoNomeEdicao.getText().equals("")) {
-            r.setNomeRemedio(campoNomeEdicao.getText());
+            remedio.setNomeRemedio(campoNomeEdicao.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Nome");
             return;
         }
         if(ComponentValidator.integerNotNegativeAndNotZero(campoQntEstoqueEdicao)) {
-            r.setQtdEstoque(Integer.parseInt(campoQntEstoqueEdicao.getText()));
+            remedio.setQtdEstoque(Integer.parseInt(campoQntEstoqueEdicao.getText()));
         }
         else {
             Mensagens.campoInvalido(this, "Campo Quantidade em Estoque");
             return;
         }
         if(!campoUnidadeMedidaEdicao.getText().equals("")) {
-            r.setUnidadeMedida(campoUnidadeMedidaEdicao.getText());
+            remedio.setUnidadeMedida(campoUnidadeMedidaEdicao.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Unidade de Medida");
             return;
         }
         try {
-            ImplRemedioDAO.getInstance().atualizar(r);
+            ImplRemedioDAO.getInstance().atualizar(remedio);
             limparCadastro();
             Mensagens.cadastradoComSucesso(this);
             habilitado(false);
-        } catch(Exception ex) {
+        } catch(SQLException | DAOException ex) {
             ex.printStackTrace();
         }
     }//GEN-LAST:event_botaoSalvarActionPerformed
@@ -324,23 +325,19 @@ public class FrameCadastroRemedio extends javax.swing.JFrame {
                         comboBoxRemedio.addItem(r);
                     }
                 }
-            } catch(Exception ex) {
+            } catch(SQLException | DAOException ex) {
                 ex.printStackTrace();
             }
         }
     }//GEN-LAST:event_jTabbedPane1StateChanged
 
     private void botaoConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoConsultarActionPerformed
-        try {
-            if(comboBoxRemedio.getSelectedIndex() != 0) {
-                remedio = ImplRemedioDAO.getInstance().encontrarPorNome(((Remedio)comboBoxRemedio.getSelectedItem()).getNomeRemedio());
-                campoNomeEdicao.setText(remedio.getNomeRemedio());
-                campoQntEstoqueEdicao.setText(remedio.getQtdEstoque() + "");
-                campoUnidadeMedidaEdicao.setText(remedio.getUnidadeMedida() + "");
-                habilitado(true);
-            }
-        } catch(Exception ex) {
-            ex.printStackTrace();
+        if(comboBoxRemedio.getSelectedIndex() != 0) {
+            remedio = (Remedio)comboBoxRemedio.getSelectedItem();
+            campoNomeEdicao.setText(remedio.getNomeRemedio());
+            campoQntEstoqueEdicao.setText(remedio.getQtdEstoque() + "");
+            campoUnidadeMedidaEdicao.setText(remedio.getUnidadeMedida());
+            habilitado(true);
         }
     }//GEN-LAST:event_botaoConsultarActionPerformed
 

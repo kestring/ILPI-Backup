@@ -5,7 +5,6 @@
 package Control.Impl;
 
 import Control.Impl.Exception.DAOException;
-import Control.Impl.Exception.DAOException;
 import Control.Interface.IDAO;
 import Model.Quarto;
 import Util.ConectionManager;
@@ -153,6 +152,34 @@ public class ImplQuartoDAO implements IDAO<Quarto> {
         Collections.sort(lista);
         return lista;
     }
+    
+    public List<Quarto> encontrarQuartoDisponivel() throws DAOException, SQLException {
+        Connection con = ConectionManager.getInstance().getConexao();
+        List<Quarto> lista = new ArrayList<>();
+        PreparedStatement prepared;
+        ResultSet result;
+        //TODO Fazer o insert do idoso aqui
+        String sql = "select * from quarto "
+                   + " where UPPER(estado) = 'DISPONIVEL'";
+        prepared = con.prepareStatement(sql);
+
+        result = prepared.executeQuery();
+
+        Quarto q = null;
+        while(result.next()){
+            int num = result.getInt("NUM_QUARTO");
+            int andar = result.getInt("NUM_ANDAR");
+            int capacidade = result.getInt("NUM_CAPACIDADE");
+            String estado = result.getString("ESTADO");
+            q = new Quarto(num, andar, capacidade, estado);
+            lista.add(q);
+        }
+        if(lista.isEmpty()){
+            throw new DAOException("Não foi possível encontrar Quarto");
+        }
+        Collections.sort(lista);
+        return lista;
+    }
 
     public Quarto encontrarPorCodigo(int numero, int andar) throws DAOException, SQLException {
         Connection con = ConectionManager.getInstance().getConexao();
@@ -217,5 +244,37 @@ public class ImplQuartoDAO implements IDAO<Quarto> {
             throw new DAOException("Não foi possível o encontrar Quarto! Cod = " + andar);
         }
         return lista;
+    }
+    
+    public Quarto encontraQuartoIdoso(int codigo) throws SQLException, DAOException{
+        Connection con = ConectionManager.getInstance().getConexao();
+        
+        PreparedStatement prepared;
+        ResultSet result;
+        //TODO Fazer o insert do idoso aqui
+        String sql = "select q.* "
+                   + "  from idoso_quarto i,"
+                         + " quarto q "
+                   + " where i.COD_IDOSO = ? "
+                     + " and q.num_quarto = i.num_quarto "
+                     + " and q.num_andar = i.num_andar ";
+        prepared = con.prepareStatement(sql);
+
+        prepared.setInt(1, codigo);
+
+        result = prepared.executeQuery();
+
+        if(result.next()){
+
+            int numQuarto = result.getInt("NUM_QUARTO");
+            int numAndar = result.getInt("NUM_ANDAR");
+            int capacidade = result.getInt("NUM_CAPACIDADE");
+            String estado = result.getString("ESTADO");
+
+            
+            return new Quarto(numQuarto, numAndar, capacidade, estado);
+        }else{
+            throw new DAOException("Quarto não encontrado!");
+        }
     }
 }

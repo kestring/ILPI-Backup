@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -252,31 +253,32 @@ public class FrameCadastroQuarto extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botaoCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoCadastrarActionPerformed
-        Quarto q = new Quarto();
+        quarto = new Quarto();
         if(ComponentValidator.integerNotNegativeAndNotZero(campoNumAndar)) {
-            q.setNumQuarto(Integer.parseInt(campoNumAndar.getText()));
+            quarto.setNumQuarto(Integer.parseInt(campoNumAndar.getText()));
         }
         else {
             Mensagens.campoInvalido(this, "Campo Número do Andar");
         }
         if(ComponentValidator.integer(campoNumQuarto)) {
-            q.setNumAndar(Integer.parseInt(campoNumQuarto.getText()));
+            quarto.setNumAndar(Integer.parseInt(campoNumQuarto.getText()));
         }
         else {
             Mensagens.campoInvalido(this, "Campo Número do Quarto");
         }
         if(ComponentValidator.integerNotNegativeAndNotZero(campoCapacidade)) {
-            q.setCapacidade(Integer.parseInt(campoCapacidade.getText()));
+            quarto.setCapacidade(Integer.parseInt(campoCapacidade.getText()));
         }
         else {
             Mensagens.campoInvalido(this, "Campo Capacidade");
         }
-        q.setEstado(Quarto.ESTADO_DISPONIVEL);
+        quarto.setEstado(Quarto.ESTADO_DISPONIVEL);
         try {
-            ImplQuartoDAO.getInstance().inserir(q);
+            ImplQuartoDAO.getInstance().inserir(quarto);
             limparCadastro();
             Mensagens.cadastradoComSucesso(this);
         } catch(Exception ex) {
+            JOptionPane.showMessageDialog(null, "Numero do Quarto já cadastrado!");
             ex.printStackTrace();
         }
     }//GEN-LAST:event_botaoCadastrarActionPerformed

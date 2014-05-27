@@ -5,7 +5,6 @@
 package Control.Impl;
 
 import Control.Impl.Exception.DAOException;
-import Control.Impl.Exception.DAOException;
 import Control.Interface.IDAO;
 import Model.Funcionario;
 import Model.Idoso;
@@ -154,13 +153,33 @@ public class ImplIncidenteDAO implements IDAO<Incidente> {
 
             Date datOcorrencia = result.getDate("DAT_OCORRENCIA");
             String dscIncidente = result.getString("DSC_INCIDENTE");
+            String nome = result.getString("NOM_OCORRIDO");
 
-            a = new Incidente(codIncidente, f, i,datOcorrencia,dscIncidente);
+            a = new Incidente(codIncidente, f, i,datOcorrencia,dscIncidente, nome);
         }
 
         if(a == null){
             throw new DAOException("Não foi possível o encontrar alimento! Cod = " + codigo);
         }
         return a;
+    }
+
+    public int encontrarCodMax() throws DAOException, SQLException{
+        Connection con = ConectionManager.getInstance().getConexao();
+        
+        PreparedStatement prepared;
+        ResultSet result;
+        //TODO Fazer o insert do idoso aqui
+        String sql = "select coalesce(max(COD_INCIDENTE),0) + 1 as VAL from incidente ";
+        
+        prepared = con.prepareStatement(sql);
+
+        result = prepared.executeQuery();
+
+        if(result.next()){
+            return result.getInt("VAL");
+        }else{
+            return 1;
+        }
     }
 }

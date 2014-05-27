@@ -17,7 +17,7 @@ public class Evento {
     private int codigo;
     private Funcionario func;
     private List<Idoso> listaIdosos;
-    private Date dataEvento;
+    private String dataEvento;
     private String nomeEvento;
     private String descricaoEvento;
 
@@ -25,7 +25,7 @@ public class Evento {
         this(0, null, null, null, null, null);
     }
     
-    public Evento(int codigo, Funcionario func, List<Idoso> listaIdosos, Date dataEvento, String nomeEvento, String descricaoEvento) {
+    public Evento(int codigo, Funcionario func, List<Idoso> listaIdosos, String dataEvento, String nomeEvento, String descricaoEvento) {
         this.codigo = codigo;
         this.func = func;
         this.listaIdosos = listaIdosos;
@@ -58,11 +58,11 @@ public class Evento {
         this.listaIdosos = listaIdosos;
     }
 
-    public Date getDataEvento() {
+    public String getDataEvento() {
         return dataEvento;
     }
 
-    public void setDataEvento(Date dataEvento) {
+    public void setDataEvento(String dataEvento) {
         this.dataEvento = dataEvento;
     }
 
@@ -82,5 +82,8 @@ public class Evento {
         this.descricaoEvento = descricaoEvento;
     }
     
-    
+    @Override
+    public String toString(){
+        return this.getNomeEvento();
+    }
 }

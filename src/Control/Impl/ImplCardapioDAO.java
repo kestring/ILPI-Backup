@@ -5,7 +5,6 @@
 package Control.Impl;
 
 import Control.Impl.Exception.DAOException;
-import Control.Impl.Exception.DAOException;
 import Control.Interface.IDAO;
 import Model.Cardapio;
 import Util.ConectionManager;
@@ -47,14 +46,16 @@ public class ImplCardapioDAO implements IDAO<Cardapio> {
         prepared = con.prepareStatement("insert into cardapio ("
                 + "COD_CARDAPIO,"
                 + "NUM_INDICE,"
+                + "NOM_CARDAPIO,"
                 + "DAT_CRIACAO,"
                 + "DAT_FIM) "
-                + "values (?,?,?,?)");
+                + "values (?,?,?,?,?)");
 
         prepared.setInt(1, card.getCodigo());
         prepared.setInt(2, card.getIndice());
-        prepared.setDate(3, card.getDataCriacao());
-        prepared.setDate(4, card.getDataFim());
+        prepared.setString(3, card.getNome());
+        prepared.setDate(4, card.getDataCriacao());
+        prepared.setDate(5, card.getDataFim());
 
         prepared.execute();
     }
@@ -125,25 +126,24 @@ public class ImplCardapioDAO implements IDAO<Cardapio> {
         List<Cardapio> lista = new ArrayList<>();
         PreparedStatement prepared;
         ResultSet result;
-            //TODO Fazer o insert do idoso aqui
-            String sql = "select * from alimento";
-            prepared = con.prepareStatement(sql);
-            
-            result = prepared.executeQuery();
-            
-            Cardapio a = null;
-//            while(result.next()){
-//                int codigo = result.getInt("COD_CARDAPIO");
-//                int codIdoso = result.getString("INF_NUTRICIONAL");
-//                String nomAlimento = result.getString("NOM_ALIMENTO");
-//                int qtdEstoq = result.getInt("QTD_ESTOQUE");
-//                a = new Cardapio(codigo, infNutricional, nomAlimento,qtdEstoq);
-//                lista.add(a);
-//            }
-            if(lista.isEmpty()){
-                throw new DAOException("Não foi possível encontrar cardapio");
-            }
-            return lista;
+        //TODO Fazer o insert do idoso aqui
+        String sql = "select * from cardapio";
+        prepared = con.prepareStatement(sql);
+
+        result = prepared.executeQuery();
+
+        Cardapio a = null;
+        while(result.next()){
+            int codigo = result.getInt("COD_CARDAPIO");
+            int numIndice = result.getInt("NUM_INDICE");
+            String nomCardapio = result.getString("NOM_CARDAPIO");
+            a = new Cardapio(codigo,numIndice, nomCardapio,null,null);
+            lista.add(a);
+        }
+        if(lista.isEmpty()){
+            throw new DAOException("Não foi possível encontrar cardapio");
+        }
+        return lista;
     }
 
     public Cardapio encontrarPorCodigo(int codigo) throws DAOException, SQLException {
@@ -164,10 +164,11 @@ public class ImplCardapioDAO implements IDAO<Cardapio> {
         while(result.next()){
             int codigoCardapio = result.getInt("COD_CARDAPIO");
             int numIndice = result.getInt("NUM_INDICE");
+            String nome = result.getString("NOM_CARDAPIO");
             Date datCriacao = result.getDate("DAT_CRIACAO");
             Date datFim = result.getDate("DAT_FIM");
 
-            a = new Cardapio(codigoCardapio,numIndice, datCriacao,datFim);
+            a = new Cardapio(codigoCardapio, numIndice, nome, datCriacao, datFim);
         }
 
         if(a == null){
@@ -194,10 +195,11 @@ public class ImplCardapioDAO implements IDAO<Cardapio> {
         while(result.next()){
             int codigoCardapio = result.getInt("COD_CARDAPIO");
             int numIndice = result.getInt("NUM_INDICE");
+            String nome = result.getString("NOM_CARDAPIO");
             Date datCriacao = result.getDate("DAT_CRIACAO");
             Date datFim = result.getDate("DAT_FIM");
 
-            a = new Cardapio(codigoCardapio,numIndice, datCriacao,datFim);
+            a = new Cardapio(codigoCardapio, numIndice, nome, datCriacao,datFim);
         }
 
         if(a == null){
@@ -234,7 +236,7 @@ public class ImplCardapioDAO implements IDAO<Cardapio> {
         return hash;
     }
     
-    public int encontraMaiorNumero() throws DAOException, SQLException{
+    public int encontraCodMax() throws DAOException, SQLException{
         Connection con = ConectionManager.getInstance().getConexao();
         
         PreparedStatement prepared;
@@ -252,4 +254,5 @@ public class ImplCardapioDAO implements IDAO<Cardapio> {
         }
         return 1;
     }
+
 }

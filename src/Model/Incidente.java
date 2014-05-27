@@ -17,17 +17,19 @@ public class Incidente {
     private Idoso idoso;
     private Date dataIncidente;
     private String descricaoIncidente;
+    private String nomeOcorrido;
 
     public Incidente() {
-        this(0, null, null, null, null);
+        this(0, null, null, null, null, null);
     }
     
-    public Incidente(int codigoIncidente, Funcionario func, Idoso idoso, Date dataIncidente, String descricaoIncidente) {
+    public Incidente(int codigoIncidente, Funcionario func, Idoso idoso, Date dataIncidente, String descricaoIncidente, String nome) {
         this.codigoIncidente = codigoIncidente;
         this.func = func;
         this.idoso = idoso;
         this.dataIncidente = dataIncidente;
         this.descricaoIncidente = descricaoIncidente;
+        this.nomeOcorrido = nome;
     }
 
     public int getCodigoIncidente() {
@@ -68,6 +70,14 @@ public class Incidente {
 
     public void setDescricaoIncidente(String descricaoIncidente) {
         this.descricaoIncidente = descricaoIncidente;
+    }
+
+    public String getNomeOcorrido() {
+        return nomeOcorrido;
+    }
+
+    public void setNomeOcorrido(String nomeOcorrido) {
+        this.nomeOcorrido = nomeOcorrido;
     }
     
 }

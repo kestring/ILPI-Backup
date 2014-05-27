@@ -15,16 +15,18 @@ public class Cardapio {
     
     private int indice;
     private int codigo;
+    private String nome;
     private Date dataCriacao;
     private Date dataFim;
 
     public Cardapio() {
-        this(0, 0, null, null);
+        this(0, 0,null, null, null);
     }
     
-    public Cardapio(int codigo,int indice, Date dataCriacao, Date dataFim) {
+    public Cardapio(int codigo,int indice,String nome, Date dataCriacao, Date dataFim) {
         this.indice = indice;
         this.codigo = codigo;
+        this.nome = nome;
         this.dataCriacao = dataCriacao;
         this.dataFim = dataFim;
     }
@@ -60,9 +62,18 @@ public class Cardapio {
     public void setDataFim(Date dataFim) {
         this.dataFim = dataFim;
     }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
     
+    @Override
     public String toString() {
-        return /*nome + */ codigo + "";
+        return this.indice + " - " + this.nome;
     }
     
 }

@@ -16,6 +16,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,16 +53,70 @@ public class ImplEventoDAO implements IDAO<Evento> {
 
         prepared.setInt(1, evento.getCodigo());
         prepared.setInt(2, evento.getFunc().getCodFuncionario());
-        prepared.setDate(3, evento.getDataEvento());
+        prepared.setString(3, evento.getDataEvento());
         prepared.setString(4, evento.getNomeEvento());
         prepared.setString(5, evento.getDescricaoEvento());
 
         prepared.execute();
-    }
+        
+        PreparedStatement prepared2;
+        
+        for(Idoso i : evento.getListaIdosos()){
+            
+            prepared2 = con.prepareStatement("insert into idoso_evento ("
+                + "COD_IDOSO,"
+                + "COD_EVENTO) "
+                + " values (?,?)");
 
+            prepared2.setInt(1, i.getCodIdoso());
+            prepared2.setInt(2, evento.getCodigo());
+
+            prepared2.execute();
+        }
+    }
+    
     @Override
     public void atualizar(Evento evento) throws DAOException, SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Connection con = ConectionManager.getInstance().getConexao();
+
+        PreparedStatement prepared;
+        //TODO Fazer o insert do idoso aqui
+        prepared = con.prepareStatement("update evento "
+                + " set COD_FUNCIONARIO = ?,"
+                    + " DAT_EVENTO = ? ,"
+                    + " NOM_EVENTO = ? ,"
+                    + " DSC_DESCRICAO_EVENTO = ? "
+                    + " where cod_evento = ? ");
+
+        prepared.setInt(1, evento.getFunc().getCodFuncionario());
+        prepared.setString(2, evento.getDataEvento());
+        prepared.setString(3, evento.getNomeEvento());
+        prepared.setString(4, evento.getDescricaoEvento());
+        prepared.setInt(5, evento.getCodigo());
+
+        prepared.execute();
+        
+        PreparedStatement prepared2;
+        
+        prepared2 = con.prepareStatement("delete from idoso_evento"
+                + " where cod_evento = ?");
+        
+        prepared2.setInt(1, evento.getCodigo());
+        
+        prepared2.execute();
+        
+        for(Idoso i : evento.getListaIdosos()){
+            
+            prepared2 = con.prepareStatement("insert into idoso_evento ("
+                + "COD_IDOSO,"
+                + "COD_EVENTO) "
+                + " values (?,?)");
+
+            prepared2.setInt(1, i.getCodIdoso());
+            prepared2.setInt(2, evento.getCodigo());
+
+            prepared2.execute();
+        }
     }
 
     @Override
@@ -97,7 +152,7 @@ public class ImplEventoDAO implements IDAO<Evento> {
             prepared.execute();
 
         } else {
-            throw new DAOException("Não foi possível encontrar o alimento informado! Cod: " + evento.getCodigo());
+            throw new DAOException("Não foi possível encontrar o evento informado! Cod: " + evento.getCodigo());
         }
     }
 
@@ -105,6 +160,47 @@ public class ImplEventoDAO implements IDAO<Evento> {
         // IMPLEMENTAR MÉTODO
         
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    public List<Evento> encontrarEventosAposData(String data) throws  DAOException, SQLException{
+        Connection con = ConectionManager.getInstance().getConexao();
+        List<Evento> lista = new ArrayList<>();
+        PreparedStatement prepared;
+        ResultSet result;
+        //TODO Fazer o insert do idoso aqui
+        String sql = "select * from evento "
+                   + " where to_date(DAT_EVENTO,'DD/MM/YYYY') >= to_date(?,'DD/MM/YYYY')";
+        prepared = con.prepareStatement(sql);
+
+        prepared.setString(1,data);
+        
+        result = prepared.executeQuery();
+
+        Evento a = null;
+        while (result.next()) {
+            int codEvento = result.getInt("COD_EVENTO");
+
+            int codFunc = result.getInt("COD_FUNCIONARIO");
+            Funcionario func = ImplFuncionarioDAO.getInstance().encontrarPorCodigo(codFunc);
+            List<Idoso> listaIdoso;
+            try{
+                listaIdoso = ImplIdosoDAO.getInstance().encontrarTodosEvento(codEvento);
+            }catch(DAOException ex){
+                continue;
+            }
+
+            String datEvento = result.getString("DAT_EVENTO");
+            String nomEvento = result.getString("NOM_EVENTO");
+            String dscEvento = result.getString("DSC_DESCRICAO_EVENTO");
+
+            a = new Evento(codEvento, func, listaIdoso, datEvento, nomEvento, dscEvento);
+            lista.add(a);
+        }
+
+        if (lista.isEmpty()) {
+            throw new DAOException("Não foi possível o encontrar Evento!");
+        }
+        return lista;
     }
 
     public Evento encontrarPorCodigo(int codigo) throws DAOException, SQLException {
@@ -130,7 +226,7 @@ public class ImplEventoDAO implements IDAO<Evento> {
 
             List<Idoso> listaIdoso = ImplIdosoDAO.getInstance().encontrarTodosEvento(codEvento);
 
-            Date datEvento = result.getDate("DAT_EVENTO");
+            String datEvento = result.getString("DAT_EVENTO");
             String nomEvento = result.getString("NOM_EVENTO");
             String dscEvento = result.getString("DSC_DESCRICAO_EVENTO");
 
@@ -138,7 +234,7 @@ public class ImplEventoDAO implements IDAO<Evento> {
         }
 
         if (a == null) {
-            throw new DAOException("Não foi possível o encontrar alimento! Cod = " + codigo);
+            throw new DAOException("Não foi possível o encontrar evento! Cod = " + codigo);
         }
         return a;
     }
@@ -146,6 +242,24 @@ public class ImplEventoDAO implements IDAO<Evento> {
     public Evento encontrarProximoEvento(Date data) throws DAOException, SQLException {
         // RETORNAR O PROXIMO EVENTO LEVANDO EM CONTA A DATA INFORMADA
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    public int encontrarCodMax() throws DAOException, SQLException{
+        Connection con = ConectionManager.getInstance().getConexao();
+
+        PreparedStatement prepared;
+        ResultSet result;
+        //TODO Fazer o insert do idoso aqui
+        String sql = "select max(cod_evento) + 1 as VAL from evento ";
+        prepared = con.prepareStatement(sql);
+
+        result = prepared.executeQuery();
+
+        if (result.next()) {
+            return result.getInt("VAL");
+        }else{
+            return 1;
+        }
     }
     
 }

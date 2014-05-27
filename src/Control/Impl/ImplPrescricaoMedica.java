@@ -45,8 +45,8 @@ public class ImplPrescricaoMedica implements IDAO<PrescricaoMedica> {
                 + "COD_PRESCRICAO,"
                 + "COD_IDOSO,"
                 + "DSC_OBSERVACAO,"
-                + "DAT_PRESCRICAO "
-                + " values (?,?,?,?,?)");
+                + "DAT_PRESCRICAO) "
+                + " values (?,?,?,?)");
 
         prepared.setInt(1, pres.getCodigoPrescricao());
         prepared.setInt(2, pres.getIdoso().getCodIdoso());
