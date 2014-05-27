@@ -9,16 +9,22 @@ package View;
 import Control.Impl.ImplAlimentoDAO;
 import Control.Impl.ImplCardapioDAO;
 import Control.Impl.ImplItemCardapioDAO;
+import Control.Impl.ImplItemPrescricaoMedica;
+import Control.Impl.ImplPrescricaoMedica;
 import Model.Alimento;
 import Model.Cardapio;
+import Model.Idoso;
 import Model.ItemCardapio;
+import Model.ItemPrescricaoMedica;
+import Model.PrescricaoMedica;
+import Model.Remedio;
+import Util.ComponentValidator;
+import Util.DataConverter;
 import Util.Mensagens;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -32,7 +38,9 @@ public class FrameCadastroCardapio extends javax.swing.JFrame {
     private List<ItemCardapio> adicionados;
     
     private Cardapio cardapio;
-    private ItemCardapio item;
+    
+    private int cod = 0;
+    private int codEdicao = 0;
     
     /**
      * Creates new form CadastroPrescricao
@@ -55,19 +63,21 @@ public class FrameCadastroCardapio extends javax.swing.JFrame {
         } catch(Exception ex) {
             ex.printStackTrace();
         }
+        
     }
+
     
     private void limparCadastro() {
         campoNome.setText("");
-        listaCardapio.setModel(new DefaultListModel());
+        listaCardapio.removeAll();
         comboBoxAlimento.setSelectedIndex(0);
     }
     
     private void limparEdicao() {
         campoNomeEdicao.setText("");
-        listaCardapioEdicao.setModel(new DefaultListModel());
+        listaCardapioEdicao.removeAll();
         comboBoxAlimentoEdicao.setSelectedIndex(0);
-        botaoConsultar.setEnabled(true);
+        botaoConsultar.setEnabled(false);
         listaItensEdicao.clear();
         adicionados.clear();
         removidos.clear();
@@ -75,12 +85,11 @@ public class FrameCadastroCardapio extends javax.swing.JFrame {
     }
     
     private void habilitado(boolean flag) {
-        campoNomeEdicao.setEnabled(flag);
-        listaCardapioEdicao.setEnabled(flag);
+        campoNome.setEnabled(flag);
+        listaCardapio.setEnabled(flag);
         comboBoxAlimentoEdicao.setEnabled(flag);
-        botaoAdicionarEdicao.setEnabled(flag);
-        botaoRemoverEdicao.setEnabled(flag);
-        botaoSalvar.setEnabled(flag);
+        botaoAdicionarEdicao.setEnabled(false);
+        botaoRemoverEdicao.setEnabled(false);
     }
     
     private void atualizaCardapio() {
@@ -125,7 +134,7 @@ public class FrameCadastroCardapio extends javax.swing.JFrame {
         comboBoxAlimentoEdicao = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Cadastra Cardápio");
+        setTitle("Cadastra Prescrição Médica");
         setResizable(false);
 
         jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -180,22 +189,22 @@ public class FrameCadastroCardapio extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
-                        .addComponent(botaoAdicionar)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
                         .addGap(18, 18, 18)
-                        .addComponent(botaoRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel4Layout.createSequentialGroup()
-                            .addComponent(jLabel4)
-                            .addGap(18, 18, 18)
-                            .addComponent(campoNome, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(comboBoxAlimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(85, 85, 85)
+                        .addComponent(campoNome, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(comboBoxAlimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(botaoAdicionar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(botaoRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(12, 12, 12)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(botaoCadastrar)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(163, Short.MAX_VALUE))
+                .addContainerGap(81, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -207,13 +216,12 @@ public class FrameCadastroCardapio extends javax.swing.JFrame {
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
                             .addComponent(campoNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(102, 102, 102)
-                        .addComponent(comboBoxAlimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(56, 56, 56)
+                        .addGap(98, 98, 98)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(comboBoxAlimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(botaoAdicionar)
                             .addComponent(botaoRemover))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
                 .addComponent(botaoCadastrar)
                 .addContainerGap())
         );
@@ -223,11 +231,6 @@ public class FrameCadastroCardapio extends javax.swing.JFrame {
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Cardápio"));
 
         listaCardapioEdicao.setEnabled(false);
-        listaCardapioEdicao.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                mouseClickAction(evt);
-            }
-        });
         jScrollPane2.setViewportView(listaCardapioEdicao);
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
@@ -273,6 +276,7 @@ public class FrameCadastroCardapio extends javax.swing.JFrame {
         });
 
         botaoConsultar.setText("Consultar");
+        botaoConsultar.setEnabled(false);
         botaoConsultar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botaoConsultarActionPerformed(evt);
@@ -292,30 +296,27 @@ public class FrameCadastroCardapio extends javax.swing.JFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addComponent(botaoRemoverEdicao, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(botaoAdicionarEdicao))
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addGap(34, 34, 34)
-                                .addComponent(comboBoxAlimentoEdicao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel5Layout.createSequentialGroup()
                         .addComponent(comboBoxCardapio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(botaoConsultar))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addGap(18, 18, 18)
                         .addComponent(campoNomeEdicao, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(237, 237, 237)
-                        .addComponent(botaoSalvar)))
-                .addContainerGap(276, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(botaoSalvar)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botaoRemoverEdicao, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(botaoAdicionarEdicao)
+                        .addGap(18, 18, 18)
+                        .addComponent(comboBoxAlimentoEdicao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(87, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -333,13 +334,12 @@ public class FrameCadastroCardapio extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(73, 73, 73)
-                        .addComponent(comboBoxAlimentoEdicao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(49, 49, 49)
+                        .addGap(142, 142, 142)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(botaoRemoverEdicao)
+                            .addComponent(comboBoxAlimentoEdicao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(botaoAdicionarEdicao))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addComponent(botaoSalvar)
                 .addContainerGap())
         );
@@ -372,33 +372,30 @@ public class FrameCadastroCardapio extends javax.swing.JFrame {
             return;
         }
         ItemCardapio ic = new ItemCardapio();
-        listaItens.add(ic);
-        ic.setNumeroAlimento(listaItens.size());
+        ic.setNumeroAlimento(r.getCodigo());
+        ic.setCod(cod++);
         ic.setAlimento(r);
+        listaItens.add(ic);
         atualizaCardapio();
     }//GEN-LAST:event_botaoAdicionarActionPerformed
 
     private void botaoCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoCadastrarActionPerformed
-        cardapio = new Cardapio();
+        Cardapio cardapio = new Cardapio();
         if(!campoNome.getText().equals("")) {
-            cardapio.setNome(campoNome.getText());
+            //cardapio.setNome(campoID.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Nome");
             return;
         }
         if(listaItens.isEmpty()) {
-            Mensagens.campoInvalido(this, "Lista Alimento");
+            Mensagens.campoInvalido(this, "Cardapio");
             return;
         }
         try {
-            int codigo = ImplCardapioDAO.getInstance().encontraCodMax();
-            cardapio.setCodigo(codigo);
-            cardapio.setIndice(codigo);
             ImplCardapioDAO.getInstance().inserir(cardapio);
             for (Iterator<ItemCardapio> it = listaItens.iterator(); it.hasNext();) {
                 ItemCardapio itemCardapio = it.next();
-                itemCardapio.setCardapio(cardapio);
                 ImplItemCardapioDAO.getInstance().inserir(itemCardapio);
             }
             limparCadastro();
@@ -427,10 +424,10 @@ public class FrameCadastroCardapio extends javax.swing.JFrame {
             return;
         }
         ItemCardapio iC = new ItemCardapio();
+        iC.setNumeroAlimento(r.getCodigo());
+        iC.setCod(codEdicao++);
         iC.setAlimento(r);
-        iC.setCardapio(cardapio);
         listaItensEdicao.add(iC);
-        iC.setNumeroAlimento(listaItensEdicao.size());
         adicionados.add(iC);
         atualizaCardapioEdicao();
     }//GEN-LAST:event_botaoAdicionarEdicaoActionPerformed
@@ -439,7 +436,7 @@ public class FrameCadastroCardapio extends javax.swing.JFrame {
         if(!listaCardapioEdicao.isSelectionEmpty()) {
             listaItensEdicao.remove((ItemCardapio) listaCardapioEdicao.getSelectedValue());
             removidos.add((ItemCardapio) listaCardapioEdicao.getSelectedValue());
-            atualizaCardapioEdicao();
+            atualizaCardapio();
         }
         else {
             Mensagens.campoInvalido(this, "Alimento cardápio");
@@ -447,18 +444,22 @@ public class FrameCadastroCardapio extends javax.swing.JFrame {
     }//GEN-LAST:event_botaoRemoverEdicaoActionPerformed
 
     private void botaoConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoConsultarActionPerformed
+        cardapio = (Cardapio) comboBoxCardapio.getSelectedItem();
         if(comboBoxCardapio.getSelectedIndex() != 0) {
             
-            cardapio = (Cardapio) comboBoxCardapio.getSelectedItem();
             listaItensEdicao = new ArrayList<>();
             try {
-                listaItensEdicao = ImplItemCardapioDAO.getInstance().encontrarTodos(cardapio.getCodigo());
-                atualizaCardapioEdicao();
+                listaItensEdicao = ImplItemCardapioDAO.getInstance().encontrarTodos();
+
+                for (Iterator<ItemCardapio> it = listaItensEdicao.iterator(); it.hasNext();) {
+                    ItemCardapio itemCardapio = it.next();
+                    itemCardapio.setCod(codEdicao++);
+                }
             } catch(Exception ex) {
                 ex.printStackTrace();
             }
-            
-            campoNomeEdicao.setText(cardapio.getNome());
+            atualizaCardapioEdicao();
+            // campoNomeEdicao.setText(cardapio.getNome());
             comboBoxAlimentoEdicao.setSelectedIndex(0);
             habilitado(true);
         }
@@ -468,15 +469,16 @@ public class FrameCadastroCardapio extends javax.swing.JFrame {
     }//GEN-LAST:event_botaoConsultarActionPerformed
 
     private void botaoSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoSalvarActionPerformed
+        Cardapio cardapio = new Cardapio();
         if(!campoNomeEdicao.getText().equals("")) {
-            cardapio.setNome(campoNomeEdicao.getText());
+            //prescricao.setID(campoIDEdicao.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Nome");
             return;
         }
         if(listaItensEdicao.isEmpty()) {
-            Mensagens.campoInvalido(this, "Lista Cardápio");
+            Mensagens.campoInvalido(this, "Cardápio");
             return;
         }
         try {
@@ -498,8 +500,6 @@ public class FrameCadastroCardapio extends javax.swing.JFrame {
     private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
         if(jTabbedPane1.getSelectedIndex() == 1) {
             try {
-                comboBoxCardapio.setModel(new DefaultComboBoxModel());
-                comboBoxCardapio.addItem("Selecione cardápio");
                 List<Cardapio> lista = ImplCardapioDAO.getInstance().encontrarTodos();
                 for (Iterator<Cardapio> it = lista.iterator(); it.hasNext();) {
                     Cardapio cardapio = it.next();
@@ -519,9 +519,6 @@ public class FrameCadastroCardapio extends javax.swing.JFrame {
             botaoConsultar.setEnabled(false);
         }
     }//GEN-LAST:event_comboBoxCardapioActionPerformed
-
-    private void mouseClickAction(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mouseClickAction
-    }//GEN-LAST:event_mouseClickAction
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botaoAdicionar;

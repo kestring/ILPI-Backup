@@ -61,8 +61,4 @@ public class Pertence {
         this.descricao = descricao;
     }
     
-    @Override
-    public String toString(){
-        return this.nomePertence;
-    }
 }

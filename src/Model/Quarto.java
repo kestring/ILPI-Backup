@@ -13,8 +13,8 @@ import java.util.List;
  */
 public class Quarto implements Comparable<Quarto> {
     
-    public static final String ESTADO_DISPONIVEL = "disponivel";
-    public static final String ESTADO_INDISPONIVEL = "indisponivel";
+    public static final String ESTADO_DISPONIVEL = "disponível";
+    public static final String ESTADO_INDISPONIVEL = "indisponível";
     
     private int numQuarto;
     private int numAndar;
@@ -76,22 +76,12 @@ public class Quarto implements Comparable<Quarto> {
 
     @Override
     public int compareTo(Quarto o) {
-        if(numAndar < o.getNumAndar() ){
-            return -1;
-        }else if(numAndar > o.getNumAndar()){
-            return 1;
-        }else if(numQuarto < o.getNumQuarto()){
-            return -1;
-        }else if(numQuarto > o.getNumQuarto()){
-            return 1;
-        }else{
-            return 0;
-        }
+        return Integer.compare(numQuarto, o.getNumQuarto());
     }
     
     @Override
     public String toString() {
-        return "Quarto n° " + numQuarto + " - "  + numAndar;
+        return "Quarto n° " + numQuarto;
     }
     
 }

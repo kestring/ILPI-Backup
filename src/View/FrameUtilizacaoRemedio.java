@@ -19,7 +19,6 @@ import Model.RegistroConsumoMedicamento;
 import Util.DataConverter;
 import Util.Mensagens;
 import java.sql.Date;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -48,7 +47,7 @@ public class FrameUtilizacaoRemedio extends javax.swing.JFrame {
                 Idoso idoso = it.next();
                 comboBoxIdoso.addItem(idoso);
             }
-        } catch(SQLException | DAOException ex) {
+        } catch(Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -193,7 +192,7 @@ public class FrameUtilizacaoRemedio extends javax.swing.JFrame {
                     PrescricaoMedica prescricaoMedica = it.next();
                     comboBoxPrescricao.addItem(prescricaoMedica);
                 }
-            } catch(SQLException | DAOException ex) {
+            } catch(Exception ex) {
                 ex.printStackTrace();
             }
         }
@@ -209,7 +208,7 @@ public class FrameUtilizacaoRemedio extends javax.swing.JFrame {
                 areaRemedios.append(registroConsumoMedicamento.toString() + "\n");
             }
             atualizaPrescricao();
-        } catch(SQLException | DAOException ex) {
+        } catch(Exception ex) {
             ex.printStackTrace();
         }
     }//GEN-LAST:event_comboBoxPrescricaoActionPerformed
@@ -234,7 +233,7 @@ public class FrameUtilizacaoRemedio extends javax.swing.JFrame {
                 listaItens.remove(ipm);
                 areaRemedios.append(registro.toString() + "\n");
                 limpar();
-            } catch(SQLException | DAOException ex) {
+            } catch(Exception ex) {
                 ex.printStackTrace();
             }
         }

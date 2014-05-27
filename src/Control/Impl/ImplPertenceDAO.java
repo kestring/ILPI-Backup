@@ -5,6 +5,7 @@
 package Control.Impl;
 
 import Control.Impl.Exception.DAOException;
+import Control.Impl.Exception.DAOException;
 import Control.Interface.IDAO;
 import Model.Idoso;
 import Model.Pertence;
@@ -130,6 +131,7 @@ public class ImplPertenceDAO implements IDAO<Pertence> {
         List<Pertence> lista = new ArrayList<>();
         PreparedStatement prepared;
         ResultSet result;
+        PreparedStatement prepared2;
         //TODO Fazer o insert do idoso aqui
         String sql = "select * from pertence"
                    + " where COD_IDOSO = ? ";
@@ -148,24 +150,24 @@ public class ImplPertenceDAO implements IDAO<Pertence> {
             a = new Pertence(i, numPertence,nomPertence,dscPertence);
             lista.add(a);
         }
-        if(lista.isEmpty()){
-            throw new DAOException("Não foi possível encontrar pertences");
+        if(lista.size() == 0){
+            throw new DAOException("Não foi possível encontrar alimentos");
         }
         return lista;
     }
 
-    public Pertence encontrarPorCodigo(int codigoIdoso, int numPertence) throws DAOException, SQLException {
+    public Pertence encontrarPorCodigo(int codigo, int numPertence) throws DAOException, SQLException {
         Connection con = ConectionManager.getInstance().getConexao();
         
         PreparedStatement prepared;
         ResultSet result;
         //TODO Fazer o insert do idoso aqui
         String sql = "select * from pertence "
-                    + "where COD_IDOSO = ?"
+                    + "where COD_PERTENCE = ?"
                     + "  and NUM_PERTENCE = ?";
         prepared = con.prepareStatement(sql);
 
-        prepared.setInt(1, codigoIdoso);
+        prepared.setInt(1, codigo);
         prepared.setInt(2, numPertence);
 
         result = prepared.executeQuery();
@@ -183,28 +185,8 @@ public class ImplPertenceDAO implements IDAO<Pertence> {
         }
 
         if(a == null){
-            throw new DAOException("Não foi possível o encontrar alimento! Cod = " + codigoIdoso);
+            throw new DAOException("Não foi possível o encontrar alimento! Cod = " + codigo);
         }
         return a;
-    }
-    
-    public int ecnontrarCodMax(int codigoIdoso) throws SQLException, DAOException{
-        Connection con = ConectionManager.getInstance().getConexao();
-        
-        PreparedStatement prepared;
-        ResultSet result;
-        //TODO Fazer o insert do idoso aqui
-        String sql = "select max(num_pertence) + 1 as VAL from pertence "
-                   + " where COD_IDOSO = ?";
-        prepared = con.prepareStatement(sql);
-
-        prepared.setInt(1, codigoIdoso);
-
-        result = prepared.executeQuery();
-
-        if(result.next()){
-            return result.getInt("VAL");
-        }
-        return 1;
     }
 }

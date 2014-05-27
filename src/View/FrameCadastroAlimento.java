@@ -6,12 +6,11 @@
 
 package View;
 
-import Control.Impl.Exception.DAOException;
 import Control.Impl.ImplAlimentoDAO;
+import Control.Impl.ImplRemedioDAO;
 import Model.Alimento;
 import Util.ComponentValidator;
 import Util.Mensagens;
-import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -271,7 +270,7 @@ public class FrameCadastroAlimento extends javax.swing.JFrame {
             Mensagens.campoInvalido(this, "Campo Quantidade em Estoque");
             return;
         }
-        if(!campoInfNutricional.getText().equals("")) {
+        if(!campoInfNutricionalEdicao.getText().equals("")) {
             r.setInfoNutricional(campoInfNutricional.getText());
         }
         else {
@@ -279,40 +278,39 @@ public class FrameCadastroAlimento extends javax.swing.JFrame {
             return;
         }
         try {
-            r.setCodigo(ImplAlimentoDAO.getInstance().encontrarCodMax());
             ImplAlimentoDAO.getInstance().inserir(r);
             limparCadastro();
             Mensagens.cadastradoComSucesso(this);
-        } catch(SQLException | DAOException ex) {
+        } catch(Exception ex) {
             ex.printStackTrace();
         }
     }//GEN-LAST:event_botaoCadastrarActionPerformed
 
     private void botaoSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoSalvarActionPerformed
-        
+        Alimento r = new Alimento();
         if(!campoNomeEdicao.getText().equals("")) {
-            alimento.setNomeAlimento(campoNomeEdicao.getText());
+            r.setNomeAlimento(campoNomeEdicao.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Nome");
             return;
         }
-        if(ComponentValidator.integerNotNegativeAndNotZero(campoQntEstoqueEdicao)) {
-            alimento.setQtdEstoque(Integer.parseInt(campoQntEstoqueEdicao.getText()));
+        if(ComponentValidator.integerNotNegativeAndNotZero(campoQntEstoque)) {
+            r.setQtdEstoque(Integer.parseInt(campoQntEstoque.getText()));
         }
         else {
             Mensagens.campoInvalido(this, "Campo Quantidade em Estoque");
             return;
         }
         if(!campoInfNutricionalEdicao.getText().equals("")) {
-            alimento.setInfoNutricional(campoInfNutricionalEdicao.getText());
+            r.setInfoNutricional(campoInfNutricionalEdicao.getText());
         }
         else {
             Mensagens.campoInvalido(this, "Campo Unidade de Medida");
             return;
         }
         try {
-            ImplAlimentoDAO.getInstance().atualizar(alimento);
+            ImplAlimentoDAO.getInstance().atualizar(r);
             limparCadastro();
             Mensagens.cadastradoComSucesso(this);
             habilitado(false);
@@ -342,7 +340,7 @@ public class FrameCadastroAlimento extends javax.swing.JFrame {
     private void botaoConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoConsultarActionPerformed
         try {
             if(comboBoxAlimento.getSelectedIndex() != 0) {
-                alimento = (Alimento)comboBoxAlimento.getSelectedItem();
+                alimento = ImplAlimentoDAO.getInstance().encontrarPorNome(((Alimento)comboBoxAlimento.getSelectedItem()).getNomeAlimento());
                 campoNomeEdicao.setText(alimento.getNomeAlimento());
                 campoQntEstoqueEdicao.setText(alimento.getQtdEstoque() + "");
                 campoInfNutricionalEdicao.setText(alimento.getInfoNutricional()+ "");
